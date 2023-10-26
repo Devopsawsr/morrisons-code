@@ -2,19 +2,17 @@ pipeline {
     agent any
 
     stages {
-        stage ("install dependencies") {
+        stage ("directory") {
             steps {
-                sh 'mkdir chinna5'
+            sh 'mkdir jaggu'
+        }
+        }
+        stage ("rmove directory") {
+            steps {
+                sh 'rm -rf jaggu'
             }
         }
-
-        stage ("test") {
-            steps {
-                echo 'testing applicatipon...'
-            }
-        }
-        stage ( " remove dir") {
-            sh ' rm -rf chinna5 '
-        }
-        }
+       
     }
+
+}
