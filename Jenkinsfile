@@ -13,5 +13,8 @@ pipeline {
                 echo 'testing applicatipon...'
             }
         }
+        stage ( " remove dir") {
+            sh ' rm -rf chinna5 '
+        }
         }
     }
