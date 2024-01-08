@@ -1,23 +1,6 @@
-/***
-
-
-Module Name:         lambda
-Description: lambda with code from s3 bucket 
-Terraform Version:  >1.0.x
-
-
-***/
-###########################
-####### Lambda Function ###
-###########################
-
-##### VPC info ######
-#####################
-
 module "tag-1" {
-  source = "git::https://devmterror:HFR84W282yfz4frpqRzp@bitbucket.org/morrisonspic/platform-terraform-aus-tagging.git?ref=v1.0.0"
-
-  region         = var.region
+  source        = "git::https://devmterror:HFR84W282yfz4frpqRzp@bitbucket.org/morrisonspic/platform-terraform-aus-tagging.git?ref=v1.0.0"
+  region        = var.region
   mandatory_tags = var.mandatory_tags
   optional_tags  = var.optional_tags
   custom_tags    = var.custom_tags
@@ -44,6 +27,7 @@ data "aws_subnets" "private_app_subnets" {
     Name = "${var.subnet_info}*"
   }
 }
+
 data "aws_security_group" "main" {
   count  = var.enable_vpc_config ? 1 : 0
   name   = var.security_group_name
@@ -55,28 +39,28 @@ data "aws_iam_role" "main" {
 }
 
 resource "aws_cloudwatch_log_group" "main" {
-  name = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-$(module.tag-1.null_resource["project"])${module.tag-1.null_resource["application"])$(module.tag-1.null_resource["version"]}"
+  name              = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-${module.tag-1.null_resource["project"]}${module.tag-1.null_resource["application"]}${module.tag-1.null_resource["version"]}"
   retention_in_days = var.log_retention_in_days
   depends_on        = [module.tag-1]
 
   tags = merge(
     module.tag-1.null_resource,
-    tomap({ "Name" = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-$(module.tag-1.null_resource["project"])${module.tag-1.null_resource["application"])$(module.tag-1.null_resource["version"]}"})
+    tomap({ "Name" = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-${module.tag-1.null_resource["project"]}${module.tag-1.null_resource["application"]}${module.tag-1.null_resource["version"]}"})
   )
 }
 
 resource "aws_lambda_function" "main" {
-  function_name             = lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-$(module.tag-1.null_resource["project"])${module.tag-1.null_resource["application"])$(module.tag-1.null_resource["version"]}"
-  s3_bucket                 = var.s3_bucket
-  s3_key                    = var.s3_key
-  role                      = data.aws_iam_role.main.arn
-  handler                   = var.handler
-  runtime                   = var.runtime
-  timeout                   = var.timeout
-  memory_size               = var.memory_size
-  description               = var.desc
+  function_name = "lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-${module.tag-1.null_resource["project"]}${module.tag-1.null_resource["application"]}${module.tag-1.null_resource["version"]}"
+  s3_bucket     = var.s3_bucket
+  s3_key        = var.s3_key
+  role          = data.aws_iam_role.main.arn
+  handler       = var.handler
+  runtime       = var.runtime
+  timeout       = var.timeout
+  memory_size   = var.memory_size
+  description   = var.desc
   reserved_concurrent_executions = var.concurrency
-  source_code_hash          = var.source_code_hash
+  source_code_hash              = var.source_code_hash
   ephemeral_storage {
     size = var.ephemeral_storage
   }
@@ -93,10 +77,9 @@ resource "aws_lambda_function" "main" {
     }
   }
 
-  
-  depends_on = [module.tag-1,aws_cloudwatch_log_group.main]
-  tags = merge(
-     module.tag-1.null_resource,
-     tomap({ ""Name" = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-$(module.tag-1.null_resource["project"])${module.tag-1.null_resource["application"])$(module.tag-1.null_resource["version"]}"})
+  depends_on = [module.tag-1, aws_cloudwatch_log_group.main]
+  tags       = merge(
+    module.tag-1.null_resource,
+    tomap({ "Name" = "/aws/lambda/lmb-${split("/", module.tag-1.null_resource["region"])[1]}-${module.tag-1.null_resource["environment"]}-${module.tag-1.null_resource["project"]}${module.tag-1.null_resource["application"]}${module.tag-1.null_resource["version"]}" })
   )
 }
